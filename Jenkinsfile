@@ -30,7 +30,7 @@ pipeline {
         stage('Update Helm Values & Push to Git') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'github-credentials', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
+                    withCredentials([usernamePassword(credentialsId: 'github_pat', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
                         // Cập nhật tag mới vào values.yaml su dụng sed
                         sh """
                             sed -i 's/tag: .*/tag: "${BUILD_TAG}"/' charts/nginx/values.yaml
