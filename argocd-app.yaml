@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: simple-nginx
+  namespace: argocd          # Namespace cài đặt ArgoCD
+  finalizers:
+    - argocd.argoproj.io/finalizer # Tự động xóa các tài nguyên K8s khi ứng dụng này bị xóa
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/huuthien24/repo.git' # Thay bằng URL Git của bạn
+    targetRevision: HEAD
+    path: charts/nginx       # Đường dan chứa Helm Chart trong repo
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: 'https://kubernetes.default.svc' # Cluster K8s hiện tại
+    namespace: default                      # Namespace trien khai Nginx
+  syncPolicy:
+    automated:               # Tự động đồng bộ khi phát hiện thay đoi trên Git
+      prune: true            # Xóa tài nguyên thừa trên K8s neu trên Git bị xóa
+      selfHeal: true         # Tự động ghi đè neu ai đó tự ý sua thu công K8s cluster
+    syncOptions:
+      - CreateNamespace=true  # Tự động tạo namespace neu chưa có
